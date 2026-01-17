@@ -1,0 +1,275 @@
+Chào bạn, dựa trên tập tin bạn cung cấp, tôi đã cấu trúc lại thành một tài liệu đặc tả kỹ thuật (Technical Specification Document - TSD) chuẩn chỉnh. Tài liệu này được tổ chức để một AI Agent (hoặc lập trình viên) có thể đọc hiểu luồng dữ liệu, yêu cầu công nghệ và logic nghiệp vụ một cách chính xác nhất.
+Dưới đây là phiên bản tài liệu đã được chuẩn hóa:
+
+TÀI LIỆU ĐẶC TẢ KỸ THUẬT: HỆ THỐNG SAAS TẠO THIỆP CƯỚI ONLINE (MOIBAN.VN)
+1. Tổng Quan & Yêu Cầu Công Nghệ (Tech Stack)
+Phần này định nghĩa môi trường và công nghệ bắt buộc để đảm bảo hệ thống vận hành đúng kiến trúc mong muốn.
+Tên dự án/Domain: moiban.vn.
+Mô hình: Web Laravel SaaS tạo thiệp cưới online.
+Backend: Laravel (Sử dụng Service Pattern để tách biệt logic).
+Frontend (Admin/App): Laravel Blade + Livewire 3 (Real-time) + Tailwind CSS + Alpine.js.
+Frontend (Template Thiệp): HTML/CSS thuần hoặc Tailwind (CDN) để tối ưu dung lượng, hạn chế JS nặng.
+Database: MySQL 8.0.
+Server Runtime:
+Môi trường PHP/Apache/Nginx truyền thống.
+TUYỆT ĐỐI KHÔNG sử dụng Node.js (Không SSR, không chạy Node server).
+Thư viện xử lý ảnh: Intervention/Image (Phiên bản PHP) phục vụ Dynamic OG Image và Watermark.
+UI Components: Sử dụng thư viện select2 cho toàn bộ các dropdown/select box.
+sử dụng database tôi đã tạo sẵn: moibanvn
+2. Kiến Trúc Dữ Liệu & Business Logic (SaaS Core)
+2.1. Hệ thống Ví (Wallet) & Thanh Toán
+Cơ chế: Mỗi User sở hữu một ví nội bộ.
+Nạp tiền: Tích hợp VietQR tĩnh.
+Format link QR: https://api.vietqr.io/image/970416-11183041-rdXzPHV.jpg?accountName=DANG%20TUAN%20DAT&addInfo=MOIBAN+{userId}+NAP.
+Xử lý giao dịch: Cung cấp 01 Internal API (kèm Secure Token) để nhận callback và cộng tiền tự động vào ví.
+2.2. Cơ chế Dùng thử & Khóa tự động (Trial Lifecycle)
+Trạng thái Trial: Thiệp mới tạo có 2 ngày dùng thử miễn phí.
+Lớp bảo vệ (Watermark):
+Hiển thị lớp phủ CSS chứa logo/text "moiban.vn".
+Sử dụng CSS pointer-events: none và user-select: none để chặn chuột phải/copy nhưng vẫn cho phép thao tác nút bấm.
+Cron Job (Quét mỗi giờ):
+Logic: Nếu current_time > trial_ends_at VÀ status == 'trial' -> Chuyển status thành locked.
+Hành vi khi bị khóa: Redirect truy cập về trang thông báo "Thiệp hết hạn - Vui lòng thanh toán".
+2.3. Gói Dịch Vụ (Subscription)
+Cấu hình: Admin có thể tạo/sửa gói linh hoạt.
+Phân loại:
+Gói Basic: Thiệp cơ bản, không nhạc, không RSVP.
+Gói Premium: Full tính năng (Nhạc, RSVP, Map, Album...).
+Thời hạn: 7 ngày, 15 ngày, 30 ngày hoặc vĩnh viễn.
+Gia hạn: User có thể nạp tiền và gia hạn bất cứ lúc nào.
+3. Hệ Thống Quản Lý Template (Core Feature)
+Đây là tính năng cốt lõi giúp mở rộng kho giao diện mà không cần sửa code hệ thống.
+Cấu trúc thư mục Template: Mỗi mẫu là 1 folder chứa:
+view.blade.php: File giao diện hiển thị.
+config.json: Định nghĩa biến (Schema) để map dữ liệu (VD: title, groom_name, event_date).
+thumbnail.jpg: Ảnh đại diện mẫu.
+Quy trình Import: Admin upload file ZIP -> Hệ thống giải nén -> Đăng ký thông tin vào Database.
+Cơ chế Render: Hệ thống map dữ liệu từ DB người dùng vào các biến trong config.json để render view.blade.php.
+4. Trình Chỉnh Sửa (The Editor) & Widgets
+4.1. Editor Logic (Livewire)
+Giao diện Split View:
+Trái (Config): Form nhập liệu render động dựa trên schema.json của template (Text, Color, Font, Upload).
+Phải (Preview): Iframe hiển thị Real-time kết quả, hỗ trợ Undo/Redo.
+Tối ưu hóa ảnh:
+Resize ảnh lớn về max-width 1920px (Desktop) và tạo thumbnail cho Mobile.
+Validate dung lượng folder theo gói (Storage::size).
+Mobile-first: Editor phải thiết kế thân thiện để chỉnh sửa trực tiếp trên điện thoại.
+4.2. Hệ thống Widgets (Blade Components)
+Các tính năng module hóa để tái sử dụng:
+Google Maps: Iframe/Link + Nút "Chỉ đường" (Deep linking mở App).
+RSVP Form: Submit Ajax -> Lưu DB -> Admin xem danh sách.
+Guestbook: Lời chúc công khai, có phân trang (Load more), chủ thiệp có quyền xóa.
+Music Player: Hỗ trợ upload MP3 hoặc Link Youtube/Soundcloud. Xử lý autoplay bị chặn bằng popup kích hoạt.
+Countdown: Đếm ngược Real-time đến wedding_date.
+VietQR Mừng cưới: Input thông tin ngân hàng -> Gọi API VietQR gen ảnh QR kèm số tiền (hoặc trống) + Nút Copy STK.
+4.3. SEO & Social Sharing (Dynamic OG)
+Dynamic Meta Tags: Render title, description theo tên cô dâu chú rể.
+Dynamic OG Image:
+Route: GET /card/{id}/og-image.
+Logic: Dùng Intervention/Image lấy background -> Ghi text (Tên CR, CD, Ngày) lên ảnh -> Trả về luồng ảnh (Image stream) cho Zalo/Facebook crawler.
+5. Quản Trị & Thông Báo (Admin & Bot)
+Dashboard: Thống kê doanh thu, User, Thiệp (biểu đồ).
+Telegram Bot: Gửi thông báo tức thì vào Group Admin khi có: User mới, Nạp tiền thành công, Thiệp mới tạo, hoặc Lỗi hệ thống.
+System Settings: Cấu hình SEO Global, thông tin Bank nhận tiền, Token Bot.
+6. UI/UX Design System
+Phong cách: Glassmorphism (Kính mờ), Tối giản, Sang trọng.
+Màu sắc: Trắng / Pastel / Nude.
+Typography: Heading dùng font Serif (VD: Playfair Display), Body dùng Sans-serif (VD: Inter).
+Mobile-first Strategy:
+Thiết kế ưu tiên trải nghiệm trên mobile cho cả trang Thiệp và Editor.
+Nút bấm lớn (Touch target), khoảng cách 12-16px.
+Sử dụng Floating Action Button (Thanh tác vụ cố định).
+
+Đề xuất bước tiếp theo cho bạn:
+Tôi có thể giúp bạn viết chi tiết file config.json mẫu cho một template thiệp cưới (định nghĩa schema các trường dữ liệu như Tên, Ngày, Ảnh, Lời chúc...) để bạn hình dung rõ hơn về cách hệ thống Template hoạt động không?
+Tuyệt vời. Đây là mẫu file config.json chuẩn được thiết kế để hệ thống Editor (Livewire) có thể tự động render ra giao diện chỉnh sửa, đồng thời map dữ liệu vào Template (Blade).
+Cấu trúc này chia thành 2 phần chính: meta (thông tin mẫu) và schema (cấu trúc dữ liệu nhập liệu).
+File: templates/elegant-floral/config.json
+JSON
+{
+  "meta": {
+    "code": "elegant-floral",
+    "name": "Elegant Floral - Phong cách Hoa Cổ Điển",
+    "version": "1.0.0",
+    "thumbnail": "thumbnail.jpg",
+    "description": "Mẫu thiệp nhẹ nhàng, phù hợp đám cưới ngoài trời."
+  },
+  "schema": [
+    {
+      "section_id": "general_info",
+      "label": "Thông tin chung",
+      "icon": "heroicon-o-cog",
+      "fields": [
+        {
+          "key": "page_title",
+          "type": "text",
+          "label": "Tiêu đề trang (Tab Browser)",
+          "default": "Đám cưới Hạnh Phúc & Bình An",
+          "rules": "required|max:60"
+        },
+        {
+          "key": "bg_music",
+          "type": "upload_audio",
+          "label": "Nhạc nền (MP3)",
+          "default": "assets/music/default.mp3"
+        },
+        {
+          "key": "primary_color",
+          "type": "color",
+          "label": "Màu chủ đạo",
+          "default": "#D4A373"
+        }
+      ]
+    },
+    {
+      "section_id": "top_banner",
+      "label": "Ảnh bìa & Lời chào",
+      "icon": "heroicon-o-photo",
+      "fields": [
+        {
+          "key": "hero_image",
+          "type": "upload_image",
+          "label": "Ảnh bìa lớn (PC + Mobile)",
+          "default": "assets/images/hero-bg.jpg",
+          "helper": "Kích thước khuyên dùng: 1920x1080px"
+        },
+        {
+          "key": "wedding_date",
+          "type": "datetime",
+          "label": "Ngày tổ chức",
+          "default": "2025-12-31 17:30:00"
+        },
+        {
+          "key": "welcome_message",
+          "type": "textarea",
+          "label": "Lời mời",
+          "default": "Trân trọng kính mời bạn đến dự đám cưới của chúng mình.",
+          "rows": 3
+        }
+      ]
+    },
+    {
+      "section_id": "couple_info",
+      "label": "Cô dâu & Chú rể",
+      "icon": "heroicon-o-heart",
+      "fields": [
+        {
+          "key": "groom_name",
+          "type": "text",
+          "label": "Tên Chú Rể",
+          "default": "Nguyễn Văn A",
+          "rules": "required"
+        },
+        {
+          "key": "groom_avatar",
+          "type": "upload_image",
+          "label": "Ảnh Chú Rể",
+          "default": "assets/images/groom.jpg"
+        },
+        {
+          "key": "bride_name",
+          "type": "text",
+          "label": "Tên Cô Dâu",
+          "default": "Trần Thị B",
+          "rules": "required"
+        },
+        {
+          "key": "bride_avatar",
+          "type": "upload_image",
+          "label": "Ảnh Cô Dâu",
+          "default": "assets/images/bride.jpg"
+        }
+      ]
+    },
+    {
+      "section_id": "event_details",
+      "label": "Thời gian & Địa điểm",
+      "icon": "heroicon-o-map",
+      "fields": [
+        {
+          "key": "location_name",
+          "type": "text",
+          "label": "Tên Nhà hàng/Tư gia",
+          "default": "Trung tâm tiệc cưới White Palace"
+        },
+        {
+          "key": "address",
+          "type": "text",
+          "label": "Địa chỉ chi tiết",
+          "default": "108 Phạm Văn Đồng, TP. Thủ Đức"
+        },
+        {
+          "key": "google_map_link",
+          "type": "text",
+          "label": "Link Google Maps (Embed/Share)",
+          "default": "https://goo.gl/maps/example"
+        }
+      ]
+    },
+    {
+      "section_id": "album",
+      "label": "Album Ảnh cưới",
+      "icon": "heroicon-o-camera",
+      "fields": [
+        {
+          "key": "gallery_images",
+          "type": "upload_multi_image",
+          "label": "Danh sách ảnh",
+          "default": [],
+          "max_files": 10
+        }
+      ]
+    },
+    {
+      "section_id": "banking",
+      "label": "Hộp mừng cưới",
+      "icon": "heroicon-o-credit-card",
+      "fields": [
+        {
+          "key": "groom_bank_qr",
+          "type": "hidden_generate", 
+          "label": "QR Chú rể (Tự động từ cài đặt)",
+          "source": "user_settings.groom_bank"
+        },
+        {
+          "key": "bride_bank_qr",
+          "type": "hidden_generate",
+          "source": "user_settings.bride_bank"
+        }
+      ]
+    }
+  ]
+}
+
+
+
+Hướng dẫn Logic xử lý cho Agent / Dev
+Để file config này hoạt động trơn tru trong kiến trúc Laravel/Livewire của bạn, đây là cách xử lý dữ liệu:
+1. Tại Editor (Livewire Component)
+Hệ thống sẽ đọc file config.json và dùng vòng lặp để render ra form nhập liệu bên trái màn hình:
+Vòng lặp cấp 1 (Sections): Tạo ra các thẻ Accordion hoặc Tab (Thông tin chung, Cô dâu Chú rể...).
+Vòng lặp cấp 2 (Fields): Dựa vào type để gọi Blade Component tương ứng:
+type: "text" -> <input type="text">
+type: "upload_image" -> Component Upload (có preview ảnh, nút crop).
+type: "color" -> Color Picker.
+Data Binding: Tất cả giá trị nhập vào sẽ được bind vào một mảng $data trong Livewire (VD: $data['groom_name']).
+2. Tại Database
+Khi user bấm "Lưu", bạn không cần tạo cột riêng cho từng trường (như groom_name, bride_name). Thay vào đó:
+Lưu toàn bộ mảng $data dưới dạng JSON vào cột content trong bảng user_cards.
+Cấu trúc bảng user_cards: id, user_id, template_id, content (JSON), slug, status.
+3. Tại Frontend (File view.blade.php của Template)
+Controller sẽ lấy cột content từ Database, json_decode ra mảng và truyền vào View.
+Lúc này, trong file Blade của template, bạn chỉ cần gọi biến:
+HTML
+<div class="hero" style="background-image: url('{{ $content['hero_image'] }}')">
+    <h1>{{ $content['welcome_message'] }}</h1>
+    <div class="names">
+        <span class="groom">{{ $content['groom_name'] }}</span>
+        &
+        <span class="bride">{{ $content['bride_name'] }}</span>
+    </div>
+</div>
+
+
+Cách tiếp cận này giúp bạn thêm Template mới với cấu trúc dữ liệu hoàn toàn khác (VD: thêm trường "Tên cha mẹ") mà không cần sửa Database hay code hệ thống. Chỉ cần sửa file config.json và view.blade.php của template đó.
+
