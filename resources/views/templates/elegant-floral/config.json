@@ -1,0 +1,204 @@
+{
+    "meta": {
+        "code": "elegant-floral",
+        "name": "Elegant Floral - Phong cách Hoa Cổ Điển",
+        "version": "1.0.0",
+        "thumbnail": "thumbnail.jpg",
+        "description": "Mẫu thiệp nhẹ nhàng với họa tiết hoa, phù hợp đám cưới ngoài trời."
+    },
+    "schema": [
+        {
+            "section_id": "general_info",
+            "label": "Thông tin chung",
+            "icon": "heroicon-o-cog",
+            "fields": [
+                {
+                    "key": "page_title",
+                    "type": "text",
+                    "label": "Tiêu đề trang (Tab Browser)",
+                    "default": "Đám cưới Hạnh Phúc & Bình An",
+                    "rules": "required|max:60"
+                },
+                {
+                    "key": "bg_music",
+                    "type": "upload_audio",
+                    "label": "Nhạc nền (MP3)",
+                    "default": null
+                },
+                {
+                    "key": "primary_color",
+                    "type": "color",
+                    "label": "Màu chủ đạo",
+                    "default": "#D4A373"
+                }
+            ]
+        },
+        {
+            "section_id": "top_banner",
+            "label": "Ảnh bìa & Lời chào",
+            "icon": "heroicon-o-photo",
+            "fields": [
+                {
+                    "key": "hero_image",
+                    "type": "upload_image",
+                    "label": "Ảnh bìa lớn (PC + Mobile)",
+                    "default": null,
+                    "helper": "Kích thước khuyên dùng: 1920x1080px"
+                },
+                {
+                    "key": "wedding_date",
+                    "type": "datetime",
+                    "label": "Ngày tổ chức",
+                    "default": "2025-12-31 17:30:00"
+                },
+                {
+                    "key": "welcome_message",
+                    "type": "textarea",
+                    "label": "Lời mời",
+                    "default": "Trân trọng kính mời bạn đến dự đám cưới của chúng mình.",
+                    "rows": 3
+                }
+            ]
+        },
+        {
+            "section_id": "couple_info",
+            "label": "Cô dâu & Chú rể",
+            "icon": "heroicon-o-heart",
+            "fields": [
+                {
+                    "key": "groom_name",
+                    "type": "text",
+                    "label": "Tên Chú Rể",
+                    "default": "Nguyễn Văn A",
+                    "rules": "required"
+                },
+                {
+                    "key": "groom_avatar",
+                    "type": "upload_image",
+                    "label": "Ảnh Chú Rể",
+                    "default": null
+                },
+                {
+                    "key": "groom_story",
+                    "type": "textarea",
+                    "label": "Giới thiệu Chú Rể",
+                    "default": "Chàng trai hiền lành, yêu thích du lịch và nấu ăn."
+                },
+                {
+                    "key": "bride_name",
+                    "type": "text",
+                    "label": "Tên Cô Dâu",
+                    "default": "Trần Thị B",
+                    "rules": "required"
+                },
+                {
+                    "key": "bride_avatar",
+                    "type": "upload_image",
+                    "label": "Ảnh Cô Dâu",
+                    "default": null
+                },
+                {
+                    "key": "bride_story",
+                    "type": "textarea",
+                    "label": "Giới thiệu Cô Dâu",
+                    "default": "Cô gái dịu dàng, đam mê nghệ thuật và âm nhạc."
+                },
+                {
+                    "key": "love_story",
+                    "type": "textarea",
+                    "label": "Câu chuyện tình yêu",
+                    "default": "Chúng mình gặp nhau vào một ngày mùa thu năm 2020...",
+                    "rows": 5
+                }
+            ]
+        },
+        {
+            "section_id": "event_details",
+            "label": "Thời gian & Địa điểm",
+            "icon": "heroicon-o-map",
+            "fields": [
+                {
+                    "key": "ceremony_time",
+                    "type": "text",
+                    "label": "Giờ làm lễ",
+                    "default": "17:30"
+                },
+                {
+                    "key": "location_name",
+                    "type": "text",
+                    "label": "Tên Nhà hàng/Tư gia",
+                    "default": "Trung tâm tiệc cưới White Palace"
+                },
+                {
+                    "key": "address",
+                    "type": "text",
+                    "label": "Địa chỉ chi tiết",
+                    "default": "108 Phạm Văn Đồng, TP. Thủ Đức"
+                },
+                {
+                    "key": "google_map_link",
+                    "type": "text",
+                    "label": "Link Google Maps (Embed/Share)",
+                    "default": "https://goo.gl/maps/example"
+                }
+            ]
+        },
+        {
+            "section_id": "album",
+            "label": "Album Ảnh cưới",
+            "icon": "heroicon-o-camera",
+            "fields": [
+                {
+                    "key": "gallery_images",
+                    "type": "upload_multi_image",
+                    "label": "Danh sách ảnh",
+                    "default": [],
+                    "max_files": 10
+                }
+            ]
+        },
+        {
+            "section_id": "banking",
+            "label": "Hộp mừng cưới",
+            "icon": "heroicon-o-credit-card",
+            "fields": [
+                {
+                    "key": "groom_bank_name",
+                    "type": "text",
+                    "label": "Ngân hàng Chú Rể",
+                    "default": "Vietcombank"
+                },
+                {
+                    "key": "groom_bank_account",
+                    "type": "text",
+                    "label": "Số tài khoản Chú Rể",
+                    "default": "1234567890"
+                },
+                {
+                    "key": "groom_bank_holder",
+                    "type": "text",
+                    "label": "Tên chủ tài khoản",
+                    "default": "NGUYEN VAN A"
+                },
+                {
+                    "key": "bride_bank_name",
+                    "type": "text",
+                    "label": "Ngân hàng Cô Dâu",
+                    "default": "Techcombank"
+                },
+                {
+                    "key": "bride_bank_account",
+                    "type": "text",
+                    "label": "Số tài khoản Cô Dâu",
+                    "default": "0987654321"
+                },
+                {
+                    "key": "bride_bank_holder",
+                    "type": "text",
+                    "label": "Tên chủ tài khoản",
+                    "default": "TRAN THI B"
+                }
+            ]
+        }
+    ]
+}
