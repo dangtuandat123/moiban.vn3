@@ -62,26 +62,41 @@ Route::middleware('auth')->group(function () {
 // ==================== ADMIN ROUTES ====================
 
 Route::prefix('admin')->middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        // Kiểm tra quyền admin
+    // Middleware check admin
+    Route::middleware(function ($request, $next) {
         if (!auth()->user()->isAdmin()) {
             abort(403);
         }
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
-    
-    // Placeholder routes cho admin panels
-    Route::get('/users', function () {
-        return 'Admin Users - Coming soon';
-    })->name('admin.users');
-    
-    Route::get('/templates', function () {
-        return 'Admin Templates - Coming soon';
-    })->name('admin.templates');
-    
-    Route::get('/settings', function () {
-        return 'Admin Settings - Coming soon';
-    })->name('admin.settings');
+        return $next($request);
+    })->group(function () {
+        // Dashboard
+        Route::get('/', function () {
+            return view('admin.dashboard');
+        })->name('admin.dashboard');
+        
+        // Users Management
+        Route::get('/users', [\App\Http\Controllers\Admin\AdminUserController::class, 'index'])->name('admin.users');
+        Route::get('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'show'])->name('admin.users.show');
+        Route::patch('/users/{user}/toggle-active', [\App\Http\Controllers\Admin\AdminUserController::class, 'toggleActive'])->name('admin.users.toggle-active');
+        Route::patch('/users/{user}/set-role', [\App\Http\Controllers\Admin\AdminUserController::class, 'setRole'])->name('admin.users.set-role');
+        Route::post('/users/{user}/add-balance', [\App\Http\Controllers\Admin\AdminUserController::class, 'addBalance'])->name('admin.users.add-balance');
+        
+        // Templates Management
+        Route::get('/templates', [\App\Http\Controllers\Admin\AdminTemplateController::class, 'index'])->name('admin.templates.index');
+        Route::get('/templates/create', [\App\Http\Controllers\Admin\AdminTemplateController::class, 'create'])->name('admin.templates.create');
+        Route::post('/templates', [\App\Http\Controllers\Admin\AdminTemplateController::class, 'store'])->name('admin.templates.store');
+        Route::get('/templates/{template}/edit', [\App\Http\Controllers\Admin\AdminTemplateController::class, 'edit'])->name('admin.templates.edit');
+        Route::put('/templates/{template}', [\App\Http\Controllers\Admin\AdminTemplateController::class, 'update'])->name('admin.templates.update');
+        Route::patch('/templates/{template}/toggle-active', [\App\Http\Controllers\Admin\AdminTemplateController::class, 'toggleActive'])->name('admin.templates.toggle-active');
+        Route::delete('/templates/{template}', [\App\Http\Controllers\Admin\AdminTemplateController::class, 'destroy'])->name('admin.templates.destroy');
+        Route::post('/templates/sync', [\App\Http\Controllers\Admin\AdminTemplateController::class, 'sync'])->name('admin.templates.sync');
+        
+        // Settings Management
+        Route::get('/settings', [\App\Http\Controllers\Admin\AdminSettingController::class, 'index'])->name('admin.settings');
+        Route::put('/settings', [\App\Http\Controllers\Admin\AdminSettingController::class, 'update'])->name('admin.settings.update');
+        Route::post('/settings', [\App\Http\Controllers\Admin\AdminSettingController::class, 'store'])->name('admin.settings.store');
+        Route::delete('/settings/{key}', [\App\Http\Controllers\Admin\AdminSettingController::class, 'destroy'])->name('admin.settings.destroy');
+    });
 });
 
 require __DIR__.'/auth.php';

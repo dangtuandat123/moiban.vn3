@@ -1,0 +1,137 @@
+{
+    "meta": {
+        "code": "minimalist-modern",
+        "name": "Minimalist Modern - Phong cách Tối giản",
+        "version": "1.0.0",
+        "thumbnail": "thumbnail.jpg",
+        "description": "Thiết kế tối giản, hiện đại với tone màu trắng đen thanh lịch."
+    },
+    "schema": [
+        {
+            "section_id": "general_info",
+            "label": "Thông tin chung",
+            "icon": "heroicon-o-cog",
+            "fields": [
+                {
+                    "key": "page_title",
+                    "type": "text",
+                    "label": "Tiêu đề trang",
+                    "default": "We're Getting Married"
+                },
+                {
+                    "key": "primary_color",
+                    "type": "color",
+                    "label": "Màu accent",
+                    "default": "#2C3E50"
+                },
+                {
+                    "key": "bg_music",
+                    "type": "upload_audio",
+                    "label": "Nhạc nền",
+                    "default": null
+                }
+            ]
+        },
+        {
+            "section_id": "couple",
+            "label": "Cô dâu & Chú rể",
+            "icon": "heroicon-o-heart",
+            "fields": [
+                {
+                    "key": "groom_name",
+                    "type": "text",
+                    "label": "Tên Chú Rể",
+                    "default": "John"
+                },
+                {
+                    "key": "bride_name",
+                    "type": "text",
+                    "label": "Tên Cô Dâu",
+                    "default": "Jane"
+                },
+                {
+                    "key": "couple_photo",
+                    "type": "upload_image",
+                    "label": "Ảnh đôi uyên ương",
+                    "default": null
+                },
+                {
+                    "key": "quote",
+                    "type": "textarea",
+                    "label": "Quote tình yêu",
+                    "default": "Every love story is beautiful, but ours is my favorite."
+                }
+            ]
+        },
+        {
+            "section_id": "event",
+            "label": "Thông tin sự kiện",
+            "icon": "heroicon-o-calendar",
+            "fields": [
+                {
+                    "key": "wedding_date",
+                    "type": "datetime",
+                    "label": "Ngày cưới",
+                    "default": "2025-12-31 18:00:00"
+                },
+                {
+                    "key": "venue_name",
+                    "type": "text",
+                    "label": "Tên địa điểm",
+                    "default": "Grand Ballroom"
+                },
+                {
+                    "key": "venue_address",
+                    "type": "text",
+                    "label": "Địa chỉ",
+                    "default": "123 Wedding Street"
+                },
+                {
+                    "key": "google_map_link",
+                    "type": "text",
+                    "label": "Link Google Maps",
+                    "default": ""
+                }
+            ]
+        },
+        {
+            "section_id": "gallery",
+            "label": "Gallery",
+            "icon": "heroicon-o-photo",
+            "fields": [
+                {
+                    "key": "gallery_images",
+                    "type": "upload_multi_image",
+                    "label": "Ảnh gallery",
+                    "default": [],
+                    "max_files": 8
+                }
+            ]
+        },
+        {
+            "section_id": "banking",
+            "label": "Mừng cưới",
+            "icon": "heroicon-o-gift",
+            "fields": [
+                {
+                    "key": "bank_name",
+                    "type": "text",
+                    "label": "Ngân hàng",
+                    "default": ""
+                },
+                {
+                    "key": "bank_account",
+                    "type": "text",
+                    "label": "Số tài khoản",
+                    "default": ""
+                },
+                {
+                    "key": "bank_holder",
+                    "type": "text",
+                    "label": "Tên chủ TK",
+                    "default": ""
+                }
+            ]
+        }
+    ]
+}
